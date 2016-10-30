@@ -2,29 +2,40 @@
 
 import mysql.connector
 import subprocess
-import os
+import os, sys
 
 db = mysql.connector.connect(host="localhost",user="akitausermanager",password="akitausers",database="akitaLaravel")
 db2 = mysql.connector.connect(host="localhost",user="akitausermanager",password="akitausers",database="akitaLaravel")
 cursor = db.cursor()
 cursor2 = db2.cursor()
+s3 = boto3.resource('s3')
+transcoder = boto3.client('elastictranscoder')
 
-sql1 = "SELECT videos.filepath, videos.filename, videos.id FROM `videos` WHERE `encoded` = 0"
+muxedpath = "/home/Akita/output/"
+muxfiles = os.listdir(muxedpath)
+#Upload everything into S3 first. 
+for file in muxfiles:
+    filepath = muxedpath+file
+    s3.meta.client.upload_file(filepath, 'akitainput', file)
+    #Debug purposes
+    print("Uploaded:"+file)
+
+#Start creating encoding jobs
+sql1 = "SELECT videos.filename, videos.id FROM `videos` WHERE `encoded` = 0"
 cursor.execute(sql1)
 row = cursor.fetchone()
 
-os.environ['curen'] = "/home/Akita/encoded/"
-os.chdir(os.environ['curen'])
 while row is not None:
-    filepath = row[0]
     filename = row[1]
     videoid = row[2]
-    outfilename = filename+".mp4"
     sql2 = "UPDATE `videos` SET `encoded` = 1 WHERE `videos`.`id` ="+str(videoid)
     cursor2.execute(sql2)
     db2.commit()
-    subprocess.call(['ffmpeg', '-y', '-i', filepath, '-c:v', 'libx264', '-preset', 'medium', '-crf', '22', '-c:a', 'copy', outfilename])
-    subprocess.call(['rm', '-f', filepath])
+    response = transcoder.create_job(
+        PipelineId='1477483372572-td13z7',
+Input={'Key': filename+".avi", 'FrameRate': 'auto', 'Resolution': 'auto', 'AspectRatio': 'auto', 'Interlaced': 'auto', 'Container': 'auto'},
+Output={'Key': filename+".webm",'PresetId': '1351620000001-100250'}
+)
     row = cursor.fetchone()
 
 cursor.close()
