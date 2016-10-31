@@ -16,7 +16,7 @@ cursor2 = db2.cursor()
 
 yesterday = datetime.now()
 #Change time delta to  0 to encode today's picture(override)
-yesterday = yesterday - timedelta(days=1)
+yesterday = yesterday - timedelta(days=0)
 
 today = yesterday.strftime("%Y-%m-%d")
 #Process date is the real date of today
@@ -45,7 +45,8 @@ while row is not None:
     cursor2.execute(sql2)
     db2.commit()
     #Navigates into camera directory.
-    os.environ['curcamera'] = "/home/Akita/"+ftpuser+"/"+str(cameraid)
+    os.environ['curcamera'] = "/mnt/buffer/users/"+ftpuser+"/"+str(cameraid)
+    print(os.environ['curcamera'])
     os.chdir(os.environ['curcamera'])
     #Process up to 7 days for a single camera.
     while True:
@@ -55,7 +56,7 @@ while row is not None:
         #Setup some patterns.
         filepattern = "*"+todaypattern+"*.jpg"
         #countpattern = "ls "+filepattern+" | wc -l"
-        outputpattern = "/home/Akita/output/"+todaypattern+str(ftpuser)+str(cameraid)+".avi"
+        outputpattern = "/mnt/buffer/output/"+todaypattern+str(ftpuser)+str(cameraid)+".avi"
         outputfilename = todaypattern+str(ftpuser)+str(cameraid)
         #print(countpattern)
         #Starts the muxing process.
