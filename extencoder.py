@@ -12,7 +12,7 @@ cursor2 = db2.cursor()
 s3 = boto3.resource('s3')
 transcoder = boto3.client('elastictranscoder')
 
-muxedpath = "/home/Akita/output/"
+muxedpath = "/mnt/buffer/output"
 muxfiles = os.listdir(muxedpath)
 #Upload everything into S3 first. 
 for file in muxfiles:
@@ -27,8 +27,8 @@ cursor.execute(sql1)
 row = cursor.fetchone()
 
 while row is not None:
-    filename = row[1]
-    videoid = row[2]
+    filename = row[0]
+    videoid = row[1]
     sql2 = "UPDATE `videos` SET `encoded` = 1 WHERE `videos`.`id` ="+str(videoid)
     cursor2.execute(sql2)
     db2.commit()
