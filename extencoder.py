@@ -3,6 +3,7 @@
 import mysql.connector
 import subprocess
 import os, sys
+import boto3
 
 db = mysql.connector.connect(host="localhost",user="akitausermanager",password="akitausers",database="akitaLaravel")
 db2 = mysql.connector.connect(host="localhost",user="akitausermanager",password="akitausers",database="akitaLaravel")
