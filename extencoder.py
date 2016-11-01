@@ -12,7 +12,7 @@ cursor2 = db2.cursor()
 s3 = boto3.resource('s3')
 transcoder = boto3.client('elastictranscoder')
 
-muxedpath = "/mnt/buffer/output"
+muxedpath = "/mnt/buffer/output/"
 muxfiles = os.listdir(muxedpath)
 #Upload everything into S3 first. 
 for file in muxfiles:
