@@ -16,7 +16,7 @@ cursor2 = db2.cursor()
 
 yesterday = datetime.now()
 #Change time delta to  0 to encode today's picture(override)
-yesterday = yesterday - timedelta(days=0)
+yesterday = yesterday - timedelta(days=1)
 
 today = yesterday.strftime("%Y-%m-%d")
 #Process date is the real date of today
