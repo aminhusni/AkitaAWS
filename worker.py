@@ -55,7 +55,7 @@ while row is not None:
         videodatestr = videodatecomp.strftime("%Y-%m-%d")
         #Setup some patterns.
         filepattern = "*"+todaypattern+"*.jpg"
-        #countpattern = "ls "+filepattern+" | wc -l"
+        countpattern = "ls "+filepattern+" | wc -l"
         outputpattern = "/mnt/buffer/output/"+todaypattern+str(ftpuser)+str(cameraid)+".avi"
         outputfilename = todaypattern+str(ftpuser)+str(cameraid)
         #print(countpattern)
