@@ -19,7 +19,6 @@ for file in muxfiles:
     filepath = muxedpath+file
     s3.meta.client.upload_file(filepath, 'akitainput', file)
     #Debug purposes
-    print("Uploaded:"+file)
 
 #Start creating encoding jobs
 sql1 = "SELECT videos.filename, videos.id FROM `videos` WHERE `encoded` = 0"
@@ -29,17 +28,20 @@ row = cursor.fetchone()
 while row is not None:
     filename = row[0]
     videoid = row[1]
+    #DRY RUN
     sql2 = "UPDATE `videos` SET `encoded` = 1 WHERE `videos`.`id` ="+str(videoid)
     cursor2.execute(sql2)
     db2.commit()
     response = transcoder.create_job(
         PipelineId='1477483372572-td13z7',
 Input={'Key': filename+".avi", 'FrameRate': 'auto', 'Resolution': 'auto', 'AspectRatio': 'auto', 'Interlaced': 'auto', 'Container': 'auto'},
-Output={'Key': filename+".webm",'PresetId': '1351620000001-100250'}
+Output={'Key': filename+".webm",'PresetId': '1478113500926-8cdl3u'}
 )
     row = cursor.fetchone()
-
+    print("Uploaded:"+filename)
 cursor.close()
 cursor2.close()
 db.close()
 db2.close()
+print("External encoder ran successfully")
+print("\n")

@@ -23,7 +23,8 @@ today = yesterday.strftime("%Y-%m-%d")
 processdate = time.strftime("%Y-%m-%d")
 
 #debug----------------------------
-print(yesterday)
+print(datetime.now())
+print("Muxing has started")
 
 #This gets the id_camera, id_user and ftp_id and ftpuser.userid for all unprocessed camera.
 sql1 = "SELECT c.id, u.id, u.ftpuser_id, ftpuser.userid FROM cameras AS c INNER JOIN users AS u ON c.user_id=u.id INNER JOIN ftpuser ON ftpuser.id=u.ftpuser_id WHERE c.processing_date < '"+processdate+"'"
@@ -42,11 +43,12 @@ while row is not None:
     ftpuser = row[3]
     #Mark that the camera has been worked on.
     sql2 = "UPDATE `cameras` SET `processing_date` = '"+processdate+"' WHERE `cameras`.`id` = "+str(cameraid)
+    #DRY RUN
     cursor2.execute(sql2)
     db2.commit()
+
     #Navigates into camera directory.
     os.environ['curcamera'] = "/mnt/buffer/users/"+ftpuser+"/"+str(cameraid)
-    print(os.environ['curcamera'])
     os.chdir(os.environ['curcamera'])
     #Process up to 7 days for a single camera.
     while True:
@@ -66,8 +68,10 @@ while row is not None:
         #See if file had been successfully created.
             if os.path.isfile(outputpattern) == True:   
                 sql2 = "INSERT INTO `videos` (`id`, `videodate`, `camera_id`, `filepath`, `filename`) VALUES (NULL, '"+videodatestr+"', '"+str(cameraid)+"', '"+outputpattern+"', '"+outputfilename+"')"
-                cursor2.execute(sql2)
+                #DRY RUN
+		cursor2.execute(sql2)
                 db2.commit()
+		print("Muxed:"+filepattern)
                 subprocess.call(['find', '-name', filepattern, '-delete'])
                 #delete all pictures by current pattern. 
         #Reduce the date until target of 7 days of backlog.
