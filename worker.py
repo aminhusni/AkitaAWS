@@ -63,6 +63,9 @@ while row is not None:
         #print(countpattern)
         #Starts the muxing process.
         fileflag = glob.glob(filepattern)
+	filecount = len(glob.glob(filepattern))
+	if filecount != 0:
+	    print(filecount)
         if fileflag:
             subprocess.call(['ffmpeg','-loglevel' ,'warning','-y','-framerate', '30', '-pattern_type', 'glob', '-i', filepattern, '-c:v', 'copy', outputpattern])
         #See if file had been successfully created.
