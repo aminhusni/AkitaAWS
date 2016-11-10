@@ -60,7 +60,7 @@ while row is not None:
         countpattern = "ls "+filepattern+" | wc -l"
         outputpattern = "/mnt/buffer/output/"+todaypattern+str(ftpuser)+str(cameraid)+".avi"
         outputfilename = todaypattern+str(ftpuser)+str(cameraid)
-        #print(countpattern)
+        print(os.environ['curcamera'])
         #Starts the muxing process.
         fileflag = glob.glob(filepattern)
 	filecount = len(glob.glob(filepattern))
